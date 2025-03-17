@@ -1,5 +1,5 @@
 using EShop.Application.Services;
-using Xunit;
+using EShop.Domain.Exceptions;
 
 namespace EShop.Application.Tests
 {
@@ -56,6 +56,16 @@ namespace EShop.Application.Tests
         {
             var result = _cardValidator.GetCardType(cardNumber);
             Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void CreditCardValidator_ThrowsTooShortException()
+        {
+            // Arrange
+            var cardValidatorService = new CardValidatorService();
+
+            // Act & Assert
+            Assert.Throws<CardNumberTooShortException>(() => cardValidatorService.ValidateCard("123123"));
         }
     }
 }
