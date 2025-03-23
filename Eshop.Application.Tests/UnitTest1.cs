@@ -1,5 +1,6 @@
 using EShop.Application.Services;
 using EShop.Domain.Exceptions;
+using Xunit;
 
 namespace EShop.Application.Tests
 {
@@ -13,18 +14,18 @@ namespace EShop.Application.Tests
         }
 
         [Theory]
-        [InlineData("3497 7965 8312 797", true)] // American Express - poprawny
-        [InlineData("4532 2080 2150 4434", true)] // Visa - poprawny
-        [InlineData("5551561443896215", true)] // MasterCard - poprawny
-        [InlineData("1234 5678 9012 345", false)] // Niepoprawny numer
-        [InlineData("4024-0071-6540-1778", true)] // Visa z myœlnikami
-        [InlineData("0000 0000 0000 0000", false)] // Same zera
-        [InlineData("", false)] // Pusty string
-        [InlineData("   ", false)] // Tylko spacje
-        [InlineData("123456789012", false)] // Za krótki (12 cyfr)
-        [InlineData("12345678901234567890", false)] // Za d³ugi (20 cyfr)
-        [InlineData("4012 8888 8888 1881", true)] // Poprawny numer Visa
-        [InlineData("5105 1051 0510 5100", true)] // Poprawny numer MasterCard
+        [InlineData("3497 7965 8312 797", true)] // American Express - valid
+        [InlineData("4532 2080 2150 4434", true)] // Visa - valid
+        [InlineData("5551561443896215", true)] // MasterCard - valid
+        [InlineData("1234 5678 9012 345", false)] // Invalid number
+        [InlineData("4024-0071-6540-1778", true)] // Visa with hyphens
+        [InlineData("0000 0000 0000 0000", false)] // All zeros
+        [InlineData("", false)] // Empty string
+        [InlineData("   ", false)] // Only spaces
+        [InlineData("123456789012", false)] // Too short (12 digits)
+        [InlineData("12345678901234567890", false)] // Too long (20 digits)
+        [InlineData("4012 8888 8888 1881", true)] // Valid Visa number
+        [InlineData("5105 1051 0510 5100", true)] // Valid MasterCard number
         public void ValidateCard_ShouldReturnExpectedResult(string cardNumber, bool expected)
         {
             var result = _cardValidator.ValidateCard(cardNumber);
@@ -46,12 +47,12 @@ namespace EShop.Application.Tests
         [InlineData("3056 1234 5678 90", "Diners Club")]
         [InlineData("5018 1234 5678 9012", "Maestro")]
         [InlineData("5020-1234-5678-9012", "Maestro")]
-        [InlineData("1234 5678 9012 3456", "Unknown")] // Nieznana karta
-        [InlineData("0000 0000 0000 0000", "Unknown")] // Same zera
-        [InlineData("", "Unknown")] // Pusty numer karty
-        [InlineData("   ", "Unknown")] // Same spacje
-        [InlineData("123456789012", "Unknown")] // Za krótki
-        [InlineData("12345678901234567890", "Unknown")] // Za d³ugi
+        [InlineData("1234 5678 9012 3456", "Unknown")] // Unknown card
+        [InlineData("0000 0000 0000 0000", "Unknown")] // All zeros
+        [InlineData("", "Unknown")] // Empty card number
+        [InlineData("   ", "Unknown")] // Only spaces
+        [InlineData("123456789012", "Unknown")] // Too short
+        [InlineData("12345678901234567890", "Unknown")] // Too long
         public void GetCardType_ShouldReturnCorrectType(string cardNumber, string expected)
         {
             var result = _cardValidator.GetCardType(cardNumber);
@@ -66,6 +67,26 @@ namespace EShop.Application.Tests
 
             // Act & Assert
             Assert.Throws<CardNumberTooShortException>(() => cardValidatorService.ValidateCard("123123"));
+        }
+
+        [Fact]
+        public void CreditCardValidator_ThrowsTooLongException()
+        {
+            // Arrange
+            var cardValidatorService = new CardValidatorService();
+
+            // Act & Assert
+            Assert.Throws<CardNumberTooLongException>(() => cardValidatorService.ValidateCard("123456789012345678901"));
+        }
+
+        [Fact]
+        public void CreditCardValidator_ThrowsInvalidException()
+        {
+            // Arrange
+            var cardValidatorService = new CardValidatorService();
+
+            // Act & Assert
+            Assert.Throws<CardNumberInvalidException>(() => cardValidatorService.ValidateCard("1234 5678 9012 3456"));
         }
     }
 }

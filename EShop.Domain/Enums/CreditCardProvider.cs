@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EShop.Domain.Enums;
 
-enum CreditCardProvider
+public enum CreditCardProvider
 {
     Visa,
     MasterCard,
