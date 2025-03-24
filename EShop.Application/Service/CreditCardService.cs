@@ -1,9 +1,9 @@
 ﻿using EShop.Domain.Enums;
 using EShop.Domain.Exceptions;
 
-namespace EShop.Application.Services
+namespace EShop.Application.Service
 {
-    public class CardValidatorService
+    public class CreditCardService
     {
         public bool ValidateCard(string cardNumber)
         {
@@ -54,7 +54,7 @@ namespace EShop.Application.Services
                 sum += n;
                 alternate = !alternate;
             }
-            return (sum % 10 == 0);
+            return sum % 10 == 0;
         }
     }
 }

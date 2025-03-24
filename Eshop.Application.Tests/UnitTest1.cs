@@ -1,4 +1,4 @@
-using EShop.Application.Services;
+using EShop.Application.Service;
 using EShop.Domain.Exceptions;
 using Xunit;
 
@@ -6,11 +6,11 @@ namespace EShop.Application.Tests
 {
     public class CardValidatorServiceTests
     {
-        private readonly CardValidatorService _cardValidator;
+        private readonly CreditCardService _cardValidator;
 
         public CardValidatorServiceTests()
         {
-            _cardValidator = new CardValidatorService();
+            _cardValidator = new CreditCardService();
         }
 
         [Theory]
@@ -63,7 +63,7 @@ namespace EShop.Application.Tests
         public void CreditCardValidator_ThrowsTooShortException()
         {
             // Arrange
-            var cardValidatorService = new CardValidatorService();
+            var cardValidatorService = new CreditCardService();
 
             // Act & Assert
             Assert.Throws<CardNumberTooShortException>(() => cardValidatorService.ValidateCard("123123"));
@@ -73,7 +73,7 @@ namespace EShop.Application.Tests
         public void CreditCardValidator_ThrowsTooLongException()
         {
             // Arrange
-            var cardValidatorService = new CardValidatorService();
+            var cardValidatorService = new CreditCardService();
 
             // Act & Assert
             Assert.Throws<CardNumberTooLongException>(() => cardValidatorService.ValidateCard("123456789012345678901"));
@@ -83,7 +83,7 @@ namespace EShop.Application.Tests
         public void CreditCardValidator_ThrowsInvalidException()
         {
             // Arrange
-            var cardValidatorService = new CardValidatorService();
+            var cardValidatorService = new CreditCardService();
 
             // Act & Assert
             Assert.Throws<CardNumberInvalidException>(() => cardValidatorService.ValidateCard("1234 5678 9012 3456"));

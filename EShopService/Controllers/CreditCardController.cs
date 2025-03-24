@@ -1,4 +1,4 @@
-﻿using EShop.Application.Services;
+﻿using EShop.Application.Service;
 using EShop.Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,9 +8,9 @@ namespace EShop.Web.Controllers
     [Route("api/[controller]")]
     public class CreditCardController : ControllerBase
     {
-        private readonly CardValidatorService _cardValidatorService;
+        private readonly CreditCardService _cardValidatorService;
 
-        public CreditCardController(CardValidatorService cardValidatorService)
+        public CreditCardController(CreditCardService cardValidatorService)
         {
             _cardValidatorService = cardValidatorService;
         }
