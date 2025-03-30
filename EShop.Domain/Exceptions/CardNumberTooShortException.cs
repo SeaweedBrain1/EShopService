@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace EShop.Domain.Exceptions;
-public class CardNumberTooShortException : Exception
+﻿namespace EShop.Domain.Exceptions.CreditCard
 {
-    public CardNumberTooShortException() { }
+    public class CardNumberTooShortException : Exception
+    {
+        public CardNumberTooShortException() : base("Card Number is too short") { }
 
-    public CardNumberTooShortException(string message) : base(message) { }
-
-    public CardNumberTooShortException(string message, Exception innerException) : base(message, innerException) { }
+        public CardNumberTooShortException(Exception innerException) : base("Card Number is too short", innerException) { }
+    }
 }

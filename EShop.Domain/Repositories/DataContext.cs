@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EShop.Domain.Repositories
 {
-    internal class DataContext : DbContext
+    public class DataContext : DbContext
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options) { } 
 

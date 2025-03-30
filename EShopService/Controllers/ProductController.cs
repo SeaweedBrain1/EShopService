@@ -1,58 +1,60 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using EShop.Application.Services;
 using EShopService.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EShopService.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class ProductController : ControllerBase
     {
-        private static List<Product> products = new List<Product>();
+        private readonly IProductService _productService;
+
+        public ProductController(IProductService productService)
+        {
+            _productService = productService;
+        }
 
         [HttpGet]
-        public IActionResult GetAll() => Ok(products);
+        public IActionResult Get()
+        {
+            var products = _productService.GetAllProducts();
+            return Ok(products);
+        }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public IActionResult Get(int id)
         {
-            var product = products.FirstOrDefault(p => p.Id == id);
-            return product == null ? NotFound() : Ok(product);
+            var product = _productService.GetProductById(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] Product product)
+        public IActionResult Post([FromBody] Product product)
         {
-            product.Id = products.Count + 1;
-            product.CreatedAt = DateTime.UtcNow;
-            products.Add(product);
-            return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
+            _productService.AddProduct(product);
+            return CreatedAtAction(nameof(Get), new { id = product.Id }, product);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] Product updatedProduct)
+        public IActionResult Put(int id, [FromBody] Product product)
         {
-            var product = products.FirstOrDefault(p => p.Id == id);
-            if (product == null) return NotFound();
-
-            product.Name = updatedProduct.Name;
-            product.Price = updatedProduct.Price;
-            product.Stock = updatedProduct.Stock;
-            product.UpdatedAt = DateTime.UtcNow;
-            product.UpdatedBy = updatedProduct.UpdatedBy;
-
+            if (id != product.Id)
+            {
+                return BadRequest();
+            }
+            _productService.UpdateProduct(product);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var product = products.FirstOrDefault(p => p.Id == id);
-            if (product == null) return NotFound();
-
-            products.Remove(product);
+            _productService.DeleteProduct(id);
             return NoContent();
         }
     }

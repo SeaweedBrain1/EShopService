@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace EShop.Domain.Exceptions;
-public class CardNumberInvalidException : Exception
+﻿namespace EShop.Domain.Exceptions.CreditCard
 {
-    public CardNumberInvalidException() { }
+    public class CardNumberInvalidException : Exception
+    {
+        public CardNumberInvalidException() : base("Card Number is invalid") { }
 
-    public CardNumberInvalidException(string message) : base(message) { }
-
-    public CardNumberInvalidException(string message, Exception innerException) : base(message, innerException) { }
+        public CardNumberInvalidException(Exception innerException) : base("Card Number is invalid", innerException) { }
+    }
 }

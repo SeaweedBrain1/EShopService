@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace EShop.Domain.Exceptions;
-public class CardNumberTooLongException : Exception
+﻿namespace EShop.Domain.Exceptions.CreditCard
 {
-    public CardNumberTooLongException() { }
+    public class CardNumberTooLongException : Exception
+    {
+        public CardNumberTooLongException() : base("Card Number is too long") { }
 
-    public CardNumberTooLongException(string message) : base(message) { }
-
-    public CardNumberTooLongException(string message, Exception innerException) : base(message, innerException) { }
+        public CardNumberTooLongException(Exception innerException) : base("Card Number is too long", innerException) { }
+    }
 }

@@ -1,44 +1,40 @@
-﻿using EShop.Application.Service;
-using EShop.Domain.Exceptions;
+﻿using EShop.Application.Services;
+using EShop.Domain.Exceptions.CreditCard;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
-namespace EShop.Web.Controllers
+namespace EShopService.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class CreditCardController : ControllerBase
     {
-        private readonly CreditCardService _cardValidatorService;
+        protected ICreditCardService _creditCardService;
 
-        public CreditCardController(CreditCardService cardValidatorService)
+        public CreditCardController(ICreditCardService creditCardService)
         {
-            _cardValidatorService = cardValidatorService;
+            _creditCardService = creditCardService;
         }
 
-        [HttpPost("validate")]
-        public IActionResult ValidateCard([FromBody] string cardNumber)
+        [HttpGet]
+        public IActionResult Get(string cardNumber)
         {
             try
             {
-                var isValid = _cardValidatorService.ValidateCard(cardNumber);
-                var cardType = _cardValidatorService.GetCardType(cardNumber);
-                return Ok(new { isValid, cardType });
+                _creditCardService.ValidateCardNumber(cardNumber);
+                return Ok(new { cardProvider = _creditCardService.GetCardType(cardNumber) });
             }
-            catch (CardNumberTooLongException)
+            catch (CardNumberTooLongException ex)
             {
-                return StatusCode(414, "Card number is too long.");
+                return StatusCode((int)HttpStatusCode.RequestUriTooLong, new { error = "The card number is too long", code = (int)HttpStatusCode.RequestUriTooLong });
             }
             catch (CardNumberTooShortException)
             {
-                return BadRequest("Card number is too short.");
+                return BadRequest(new { error = "The card number is too short", code = (int)HttpStatusCode.BadRequest });
             }
             catch (CardNumberInvalidException)
             {
-                return BadRequest("Card number is invalid.");
-            }
-            catch (Exception)
-            {
-                return StatusCode(406, "Card type not supported.");
+                return BadRequest(new { error = "Invalid Card Number", code = (int)HttpStatusCode.BadRequest });
             }
         }
     }
